@@ -115,7 +115,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(json.loads(string), json.loads(js))
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get_return_object(self):
+    def test_get(self):
         """Test that get return object attr"""
         storage = FileStorage()
         obj = User()
@@ -128,7 +128,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(ret_obj2, obj2)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count_return_number(self):
+    def test_count(self):
         storage = FileStorage()
         user_before = storage.count(User)
         city_before = storage.count(City)

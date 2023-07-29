@@ -113,3 +113,34 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_return_object(self):
+        """Test that get return object attr"""
+        storage = FileStorage()
+        obj = User()
+        obj.save()
+        ret_obj = storage.get(User, obj.id)
+        self.assertEqual(ret_obj, obj)
+        obj2 = City()
+        obj2.save()
+        ret_obj2 = storage.get(City, obj2.id)
+        self.assertEqual(ret_obj2, obj2)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_return_number(self):
+        storage = FileStorage()
+        user_before = storage.count(User)
+        city_before = storage.count(City)
+        six_users = [User(), User(), User(), User(), User(), User()]
+        five_cities = [City(), City(), City(), City(), City()]
+        for i in five_cities:
+            i.save()
+        for i in six_users:
+            i.save()
+        user_after = storage.count(User)
+        city_after = storage.count(City)
+        total = len(FileStorage._FileStorage__objects)
+        self.assertEqual(user_after, user_before+len(six_users))
+        self.assertEqual(city_after, city_before+len(five_cities))
+        self.assertEqual(total, storage.count())

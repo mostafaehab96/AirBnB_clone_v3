@@ -11,7 +11,8 @@ from models.state import State
 from models.city import City
 
 
-@app_views.route("/states/<string:state_id>/cities", strict_slashes=False, methods=["GET", "POST"])
+@app_views.route("/states/<string:state_id>/cities", strict_slashes=False,
+                 methods=["GET", "POST"])
 def cities_by_state(state_id):
     state = storage.get(State, state_id)
     if state:

@@ -3,6 +3,7 @@
 from flask import Flask
 from flask import make_response
 from flask import jsonify
+from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
 from os import getenv
@@ -16,6 +17,7 @@ HBNB_API_PORT = getenv('HBNB_API_PORT') if environ.get(
 
 app = Flask(__name__)
 app.register_blueprint(app_views, url_prefix='/api/v1')
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 @app.teardown_appcontext

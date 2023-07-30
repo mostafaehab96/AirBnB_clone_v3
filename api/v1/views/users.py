@@ -18,12 +18,16 @@ def get_users():
     else:
         new_dict = request.get_json()
         if new_dict:
-            if new_dict.get("name"):
+            if not new_dict.get("name"):
+                return make_response({"error": "Missing name"}, 400)
+            elif not new_dict.get("email"):
+                return make_response({"error": "Missing email"}, 400)
+            elif not new_dict.get("password"):
+                return make_response({"error": "Missing password"}, 400)
+            else:
                 user = User(**new_dict)
                 user.save()
                 return make_response(jsonify(user.to_dict()), 201)
-            else:
-                return make_response({"error": "Missing name"}, 400)
         else:
             return make_response({"error": "Not a JSON"}, 400)
 

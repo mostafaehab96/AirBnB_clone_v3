@@ -13,7 +13,7 @@ from models.amenity import Amenity
 
 
 @app_views.route("/amenities", strict_slashes=False, methods=["GET", "POST"])
-def amenity():
+def get_amenity():
     if request.method == "GET":
         return jsonify([amenity.to_dict()
                        for amenity in storage.all(Amenity).values()])
@@ -32,7 +32,7 @@ def amenity():
 
 @app_views.route("/amenities/<amentiy_id>", strict_slashes=False,
                  methods=["GET", "DELETE", "PUT"])
-def amentiy(amentiy_id):
+def handel_amentiy(amentiy_id):
     amentiy = storage.get(Amenity, amentiy_id)
     if amentiy:
         if request.method == "GET":

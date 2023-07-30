@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Handles REST operations for amentites object"""
+"""Handles REST operations for User object"""
 
 from api.v1.views import app_views
 from flask import jsonify
@@ -47,7 +47,7 @@ def handel_user(user_id):
             new_dict = request.get_json()
             if new_dict:
                 for k, v in new_dict.items():
-                    if k not in ['id', 'created_at', 'updated_at']:
+                    if k not in ['id', 'created_at', 'updated_at', 'email']:
                         setattr(user, k, v)  # risk
                 user.save()
                 return jsonify(user.to_dict())

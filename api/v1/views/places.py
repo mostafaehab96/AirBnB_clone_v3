@@ -72,6 +72,7 @@ def getPlacesFromCities(city, all_places):
     for place in city.places:
         if place not in all_places:
             all_places.append(place)
+    return all_places
 
 
 @app_views.route("/places_search", strict_slashes=False,
@@ -83,6 +84,8 @@ def place_search():
     states = []
     cities = []
     amenities = []
+    filterd_places = []
+
     for state_id in data.get('states', []):
         state = storage.get(State, state_id)
         if state:
@@ -95,27 +98,25 @@ def place_search():
         amenity = storage.get(Amenity, amenity_id)
         if amenity:
             amenities.append(amenity)
-
-    places = storage.all(Place)
-    if len(states) == len(cities) == len(amenities) == 0:
-        return jsonify([place.to_dict()
-                       for place in places.values()])
     all_places = []
-    print(cities)
     for city in cities:
         all_places = getPlacesFromCities(city, all_places)
     for state in states:
         for city in state.cities:
             all_places = getPlacesFromCities(city, all_places)
-    filterd_places = []
-    for place in all_places:
-        take = True
-        for amenity in amenities:
-            if amenity not in place.amenities:
-                take = False
-                break
-        if take:
-            filterd_places.append(place)
+    if len(states) == len(cities) == 0:
+        all_places = storage.all(Place).values()
+    if len(amenities) != 0:
+        for place in all_places:
+            take = True
+            for amenity in amenities:
+                if amenity not in place.amenities:
+                    take = False
+                    break
+            if take:
+                filterd_places.append(place)
+    else:
+        filterd_places = all_places
 
     return jsonify([place.to_dict()
                     for place in filterd_places])

@@ -65,3 +65,57 @@ def place_byid(place_id):
             else:
                 return make_response({"error": "Not a JSON"}, 400)
     abort(404)
+
+
+def getPlacesFromCities(city, all_places):
+    """helper function for places search"""
+    for place in city.places:
+        if place not in all_places:
+            all_places.append(place)
+
+
+@app_views.route("/places_search", strict_slashes=False,
+                 methods=["POST"])
+def place_search():
+    data = request.get_json()
+    if not data:
+        return make_response({"error": "Not a JSON"}, 400)
+    states = []
+    cities = []
+    amenities = []
+    for state_id in data.get('states', []):
+        state = storage.get(State, state_id)
+        if state:
+            states.append(state)
+    for city_id in data.get('cities', []):
+        city = storage.get(City, city_id)
+        if city:
+            cities.append(city)
+    for amenity_id in data.get('amenities', []):
+        amenity = storage.get(Amenity, amenity_id)
+        if amenity:
+            amenities.append(amenity)
+
+    places = storage.all(Place)
+    if len(states) == len(cities) == len(amenities) == 0:
+        return jsonify([place.to_dict()
+                       for place in places.values()])
+    all_places = []
+    print(cities)
+    for city in cities:
+        all_places = getPlacesFromCities(city, all_places)
+    for state in states:
+        for city in state.cities:
+            all_places = getPlacesFromCities(city, all_places)
+    filterd_places = []
+    for place in all_places:
+        take = True
+        for amenity in amenities:
+            if amenity not in place.amenities:
+                take = False
+                break
+        if take:
+            filterd_places.append(place)
+
+    return jsonify([place.to_dict()
+                    for place in filterd_places])

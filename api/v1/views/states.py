@@ -44,7 +44,7 @@ def state(state_id):
             if new_dict:
                 for k, v in new_dict.items():
                     if k not in ['id', 'created_at', 'updated_at']:
-                        setattr(state, k, v) # risk
+                        setattr(state, k, v)  # risk
                 state.save()
                 return jsonify(state.to_dict())
             else:

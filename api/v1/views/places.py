@@ -11,6 +11,7 @@ from models.state import State
 from models.city import City
 from models.place import Place
 from models.user import User
+from models.amenity import Amenity
 
 
 @app_views.route("/cities/<city_id>/places", strict_slashes=False,
@@ -79,7 +80,7 @@ def getPlacesFromCities(city, all_places):
                  methods=["POST"])
 def place_search():
     data = request.get_json()
-    if not data:
+    if data is None:
         return make_response({"error": "Not a JSON"}, 400)
     states = []
     cities = []
